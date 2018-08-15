@@ -1,0 +1,7 @@
+Observables:
+  use .subscribe to extract it.
+  can use | async to extra data in html
+  can be pipe
+
+Subjects:
+  emits data...
