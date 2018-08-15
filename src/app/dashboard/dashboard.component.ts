@@ -12,7 +12,8 @@ import { FilterService } from '../filter.service';
 })
 export class DashboardComponent implements OnInit {
 
-  heroes;
+  isLoading$ = this.heroService.isLoadingHeroes();
+  heroes$ = this.heroService.getFilteredHeroes();
   onHover = false;
   filterValue = '';
   constructor(
@@ -20,15 +21,17 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.heroes = this.heroService.getFilteredHeroes();
+    console.log(this.heroes$, 'init');
   }
 
-  updateHoverHeroId(id: string) {
+  updateHoverHeroId(id: string, e) {
+    console.log('hover on');
     this.heroService.updateHoverHeroId(id);
     this.onHover = true;
   }
 
-  removeHoverHeroId(): void {
+  removeHoverHeroId(e): void {
+    console.log('hover off');
     this.heroService.updateHoverHeroId(null);
     this.onHover = false;
 

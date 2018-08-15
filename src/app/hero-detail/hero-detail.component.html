@@ -1,13 +1,32 @@
-<ng-container *ngIf="hero">
-  <h2>{{hero.name | uppercase}} Details</h2>
-  <div><span>id: </span>{{hero.id}}</div>
-  <div>
-    <label>
-      name:
-      <input [(ngModel)]="hero.name" placeholder="name">
-    </label>
-    <button (click)="update()">Save </button>
-    <button (click)="delete()">Delete </button>
+<div>
+  <ng-container *ngIf='isLoading$ | async; else foundHero'>
+    Hold on, finding your hero  
+  </ng-container>
+  <div #foundHero *ngIf='hero'>
+    <h2>{{hero.name | uppercase}} Details</h2>
+    <div><span>id: </span>{{hero.id}}</div>
+    <div>
+      <label>
+        name:
+        <input [(ngModel)]="hero.name" placeholder="name">
+      </label>
+      <button (click)="update()" [disabled]='isUpdating'>
+          <ng-container *ngIf='isUpdating; else notUpdating'>
+            Saving
+          </ng-container>
+          <ng-template #notUpdating>
+            Save
+          </ng-template>
+      </button>
+      <button (click)="delete()" [disabled]='isDeleting'>
+          <ng-container *ngIf='isDeleting; else notDeleting'>
+              Deleting
+            </ng-container>
+            <ng-template #notDeleting>
+              Delete
+            </ng-template>
+        </button>
+    </div>
+    <button (click)="goBack()">Go Back</button>
   </div>
-  <button (click)="goBack()">Go Back</button>
-</ng-container>
+</div>

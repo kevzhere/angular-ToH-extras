@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, tap, sample, distinctUntilChanged, switchMap, skipWhile, bufferTime } from 'rxjs/operators';
-import { Observable, interval, BehaviorSubject, combineLatest } from 'rxjs';
+import { map, tap, debounce, sample,
+  filter, debounceTime, distinctUntilChanged,
+  switchMap, skipWhile, bufferTime, delay } from 'rxjs/operators';
+import { Observable, interval, timer, BehaviorSubject, combineLatest, of } from 'rxjs';
 
 import { Hero } from './hero';
 import { HEROES } from './mock-heroes';
@@ -17,7 +19,7 @@ import { HeroFilterComponent } from './hero-filter/hero-filter.component';
 export class HeroService {
 
   url = 'http://5b71bbe1586eb5001463a76e.mockapi.io/heroes';
-  private heroes$ = new BehaviorSubject<Hero[]>([]);
+  private heroes$ = new BehaviorSubject<Hero[]>(null);
   private hoveredHeroId$ = new BehaviorSubject<string>(null);
 
   constructor(
@@ -27,11 +29,21 @@ export class HeroService {
   ) {}
 
   findHero(id: string): Observable<Hero> {
-    return this.getHeroes().pipe(
+    return this.getLoadedHeroes().pipe(
       map(heroes => {
-
         return heroes.find(hero => hero.id === id);
       })
+    );
+  }
+
+  isLoadingHeroes(): Observable<Boolean> {
+    return this.getHeroes().pipe(
+      map(heroes => heroes == null)
+    );
+  }
+  getLoadedHeroes(): Observable<Hero[]> {
+    return this.heroes$.pipe(
+      filter(heroes => heroes != null)
     );
   }
 
@@ -40,13 +52,15 @@ export class HeroService {
   }
 
   getFilteredHeroes(): Observable<Hero[]> {
-    return combineLatest(this.getHeroes(), this.filterService.getFilter())
+    return combineLatest(this.getLoadedHeroes(), this.filterService.getFilter())
       .pipe(
-        map(([heroes, filter]) => {
+        map(([heroes, filterString]) => {
+          console.log('getting filtered heroes', heroes);
+          console.log('filter', filterString);
           return heroes.filter(hero => (
-            hero.name.toLowerCase().includes(filter.toLowerCase())
+            hero.name.toLowerCase().includes(filterString.toLowerCase())
           ));
-        })
+        }),
       );
   }
 
@@ -60,20 +74,16 @@ export class HeroService {
     return this.http.get<Hero>(this.url + {id});
   }
 
-  updateHero(id: string, hero): void {
-    this.http.put(this.url + {id}, hero)
-      .subscribe(result => alert('"Congrats on your updated hero!"'), err => alert('error updating hero'));
+  updateHero(id: string, hero): Observable<{}> {
+    return this.http.put(this.url + '/' +  id, hero);
   }
 
-  deleteHero(id: string): void {
-    this.http.delete(this.url + {id})
-    .subscribe(result => {
-      alert('"Congrats on your deleting hero!"');
-      this.heroes$.next(this.heroes$.getValue().filter( hero => {
-        return hero.id !== id;
-      }
-      ));
-    }, err => alert('error deleting hero'));
+  deleteHero(id: string): Observable<{}> {
+    return this.http.delete(this.url + '/' + id);
+  }
+
+  removeHero(id: string): void {
+    this.heroes$.next(this.heroes$.getValue().filter( hero => hero.id !== id));
   }
 
   postHero(hero: Hero): void {
@@ -88,11 +98,11 @@ export class HeroService {
     this.hoveredHeroId$.next(id);
   }
 
-  getHoverHeroId(): string {
-    return this.hoveredHeroId$.getValue();
+  getHoverHeroId(): Observable<string> {
+    return this.hoveredHeroId$.asObservable();
   }
 
-  fetchImage(): Observable<{}> {
-    return this.http.get(`http://5b6c6f1dc06fb600146274e9.mockapi.io/api/v1/avatars/${this.getHoverHeroId()}`);
+  fetchImage(id: string): Observable<{}> {
+    return this.http.get(`http://5b6c6f1dc06fb600146274e9.mockapi.io/api/v1/avatars/${id}`);
   }
 }

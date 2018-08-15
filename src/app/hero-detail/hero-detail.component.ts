@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, delay } from 'rxjs/operators';
 
 import { HeroService } from '../hero.service';
 import { Hero } from '../hero';
@@ -16,6 +16,9 @@ import { Hero } from '../hero';
 export class HeroDetailComponent implements OnInit {
 
   hero;
+  isLoading$;
+  isUpdating;
+  isDeleting;
 
   constructor(
     private route: ActivatedRoute,
@@ -26,6 +29,9 @@ export class HeroDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isUpdating = false;
+    this.isDeleting = false;
+    this.isLoading$ = this.heroService.isLoadingHeroes();
     this.route.paramMap.pipe(
       map(params => params.get('id')),
       switchMap(id => this.heroService.findHero(id))
@@ -37,12 +43,32 @@ export class HeroDetailComponent implements OnInit {
   }
 
   update(): void {
-    this.heroService.updateHero(this.hero.id, this.hero);
-    this.location.back();
+    this.isUpdating = true;
+    this.heroService.updateHero(this.hero.id, this.hero)
+      .pipe(
+        delay(2000)
+      )
+      .subscribe(
+        success => { console.log('updated'); this.isUpdating = false; },
+        err => this.isUpdating = false
+      );
+    // this.location.back();
   }
 
   delete(): void {
-    this.heroService.deleteHero(this.hero.id);
-    this.location.back();
+    this.isDeleting = true;
+    this.heroService.deleteHero(this.hero.id)
+      .pipe(
+        delay(2000)
+      ).subscribe(
+        success => {
+          this.isDeleting = false;
+          this.heroService.removeHero(this.hero.id);
+        },
+        err => {
+          this.isDeleting = false;
+          this.heroService.removeHero(this.hero.id);
+        }
+      );
   }
 }

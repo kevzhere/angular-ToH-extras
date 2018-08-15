@@ -14,6 +14,6 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.heroService.fetchHeroes();
+    setTimeout(() => this.heroService.fetchHeroes(), 2000);
   }
 }

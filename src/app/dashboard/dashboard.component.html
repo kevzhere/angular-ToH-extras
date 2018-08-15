@@ -1,21 +1,25 @@
 <h3>Top Heroes</h3>
 <app-hero-filter></app-hero-filter>
 <div class="grid grid-pad">
+  <ng-container *ngIf='isLoading$ | async; else showHero'>
+    <h1>Please wait while your hero loads</h1>
+  </ng-container>
   <a
-    *ngFor="let hero of heroes | async"
+    *ngFor="let hero of heroes$ | async"
     class="col-1-4"
     routerLink="/detail/{{hero.id}}"
+    #showHero
   >
     <div
     class="module hero"
-    (mouseenter)='updateHoverHeroId(hero.id)'
-    (mouseout)='removeHoverHeroId()'
+    (mouseenter)='updateHoverHeroId(hero.id, $event)'
+    (mouseleave)='removeHoverHeroId($event)'
     >
       <h4>{{hero.name}}</h4>
     </div>
   </a>
 </div>
-<ng-container *ngIf='onHover'>
+<!-- <ng-container *ngIf="onHover"> -->
     <app-hero-image></app-hero-image>
-</ng-container>
+<!-- </ng-container> -->
 
