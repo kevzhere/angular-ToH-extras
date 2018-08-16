@@ -7,8 +7,9 @@
     <div><span>id: </span>{{hero.id}}</div>
     <div>
       <label>
-        name:
-        <input [(ngModel)]="hero.name" placeholder="name">
+        name:<br>
+        <div *ngIf='!editing'>{{hero.name}}</div>
+        <input *ngIf='editing' [(ngModel)]="hero.name" placeholder="name" [attr.disabled]='true'>
       </label>
       <button (click)="update()" [disabled]='isUpdating'>
           <ng-container *ngIf='isUpdating; else notUpdating'>
@@ -28,5 +29,6 @@
         </button>
     </div>
     <button (click)="goBack()">Go Back</button>
+    <button (click)="edit()">Edit</button>
   </div>
 </div>

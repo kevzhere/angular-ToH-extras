@@ -1,0 +1,94 @@
+<h2>Form Control</h2>
+<label>
+  Name:
+  <input type="text" [formControl]="name">
+</label>
+<p>
+  Value: {{name | json}}
+</p>
+<button (click)="updateName()"> Update Name</button>
+<br>
+<h2>Form Group</h2>
+<form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+  <label>
+    First Name: 
+    <input type="text" formControlName="firstName">
+  </label>
+  <label>
+    Last Name:
+    <input type="text" formControlName="lastName">
+  </label>
+  <div formGroupName="address">
+      <h3>Address</h3>
+      <label>
+        Street:
+        <input type="text" formControlName="street">
+      </label>
+      <label>
+        City:
+        <input type="text" formControlName="city">
+      </label>
+      <label>
+        State:
+        <input type="text" formControlName="state">
+      </label>
+      <label>
+        Zip Code:
+        <input type="text" formControlName="zip">
+      </label>
+    </div>
+    <p>
+      <button (click)="updateProfile()" [disabled]="!profileForm.valid">Submit</button>
+    </p>
+  </form>
+<p>
+  Value: {{ profileForm.value | json }}
+</p>
+
+<br>
+<h2>Form Builder</h2>
+<form [formGroup]="profileFormBuilder" (ngSubmit)="onSubmit()">
+    <label>
+      First Name: 
+      <input type="text" formControlName="firstName2" required>
+    </label>
+    <label>
+      Last Name:
+      <input type="text" formControlName="lastName2">
+    </label>
+    <div formGroupName="address2">
+        <h3>Address</h3>
+        <label>
+          Street:
+          <input type="text" formControlName="street2">
+        </label>
+        <label>
+          City:
+          <input type="text" formControlName="city2">
+        </label>
+        <label>
+          State:
+          <input type="text" formControlName="state2">
+        </label>
+        <label>
+          Zip Code:
+          <input type="text" formControlName="zip2">
+        </label>
+        <div formArrayName="aliases">
+            <h3>Aliases</h3> <button (click)="addAlias()">Add Alias</button>
+          
+            <div *ngFor="let address of aliases.controls; let i=index">
+              <!-- The repeated alias template -->
+              <label>
+                Alias:
+                <input type="text" [formControlName]="i">
+              </label>
+            </div>
+          </div>
+      </div>
+      <p>
+        <button (click)="updateProfile()" [disabled]="!profileForm.valid">Update Profile</button>
+      </p>
+    </form>
+{{profileFormBuilder.value | json}}
+{{profileFormBuilder.status}}

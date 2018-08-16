@@ -19,6 +19,7 @@ export class HeroDetailComponent implements OnInit {
   isLoading$;
   isUpdating;
   isDeleting;
+  editing = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -40,6 +41,10 @@ export class HeroDetailComponent implements OnInit {
 
   goBack(): void {
     this.location.back();
+  }
+
+  edit() {
+    this.editing = !this.editing;
   }
 
   update(): void {

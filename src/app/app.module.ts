@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
@@ -12,6 +12,10 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { NewHeroComponent } from './new-hero/new-hero.component';
 import { HeroFilterComponent } from './hero-filter/hero-filter.component';
 import { HeroImageComponent } from './hero-image/hero-image.component';
+import { TemplateFormsComponent } from './template-forms/template-forms.component';
+import { ReactiveFormComponent } from './reactive-form/reactive-form.component';
+import { DynamicFormComponent } from './dynamic-form/dynamic-form.component';
+import { IdentityRevealedDirective } from './identity-revealed.directive';
 
 @NgModule({
   declarations: [
@@ -22,13 +26,18 @@ import { HeroImageComponent } from './hero-image/hero-image.component';
     DashboardComponent,
     NewHeroComponent,
     HeroFilterComponent,
-    HeroImageComponent
+    HeroImageComponent,
+    TemplateFormsComponent,
+    ReactiveFormComponent,
+    DynamicFormComponent,
+    IdentityRevealedDirective
   ],
   imports: [
     BrowserModule,
     FormsModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
